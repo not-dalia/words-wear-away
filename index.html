@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Words wear away</title>
+  <link rel="stylesheet" href="/style.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Afacad:wght@400;500;600;700&amp;family=Outfit:wght@300;400;500;600;700&amp;family=Gentium+Book+Plus&amp;display=swap"
+    rel="stylesheet" async defer>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="book">
+  <div id="sidebar-wrapper" x-bind:class="{'opening': sidebarOpen, 'closed': !sidebarOpen && sidebarTransitionDone, 'open': sidebarOpen && sidebarTransitionDone}">
+    <header>
+      <h1><span>words</span><span>wear</span><span>away</span></h1>
+    </header>
+    <aside>
+      <div id="currently-reading">
+        <span>Currently reading</span>
+        <hgroup>
+          <h2 x-text="book.title"></h2>
+          <p class="subtitle" x-text="book.author">
+          </p>
+        </hgroup>
+        <button id="switch-book" x-on:click="switchBook">
+          Switch Book
+        </button>
+      </div>
+
+      <div class="scrollable-area">
+        <!-- <div id="book-stats">
+          <details open>
+            <summary>
+              <h2>Reading Progress</h2>
+            </summary>
+            <div class="details-container">
+              <div class="stat-row">
+                You have read <span class="stat" x-text="progress.wordCount || 0"></span> word<span
+                  x-show="progress.wordCount != 1">s</span> (out of <span x-text="book.wordCount"></span>)
+              </div>
+              <div class="stat-row">
+                You have seen <span class="stat" x-text="progress.uniqueWordCount || 0"></span> unique word<span
+                  x-show="progress.uniqueWordCount != 1">s</span> (out of <span x-text="book.uniqueWordCount"></span>)
+              </div>
+            </div>
+          </details>
+        </div> -->
+        <div id="what-is-this">
+          <details open>
+            <summary>
+              <h2>What is this?</h2>
+            </summary>
+            <div class="details-container">
+
+              <p>
+                With every new encounter with a word, the word will become slightly smaller, more faded, or both — just slightly more worn
+                away.
+              </p>
+              <p>
+                Maybe it's a tool to explore words you're less familiar with, maybe it's a way to make reading a little more fun,
+                or maybe it's just a silly experiment to see what books would look like if words lost their meaning the more they
+                were used.
+              </p>
+              <p>
+                Experiment with the settings below to change how the words wear away.
+              </p>
+            </div>
+          </details>
+        </div>
+        <div id="settings">
+          <details open>
+            <summary>
+              <h2>Settings</h2>
+            </summary>
+            <div class="details-container">
+              <div class="setting-row">
+                <!-- <label for="wearing-style">
+                  Word wearing style
+                </label> -->
+                <fieldset>
+                  <legend>Word wear style</legend>
+                  <div>
+                    <input type="checkbox" id="wearing-style-shrink" name="wearing-style" value="shrink"
+                      x-model="settings.wearingStyle" />
+                    <label for="wearing-style-shrink">
+                      Shrink
+                    </label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="wearing-style-fade" name="wearing-style" value="fade"
+                      x-model="settings.wearingStyle" />
+                    <label for="wearing-style-fade">
+                      Fade
+                    </label>
+                  </div>
+              </div>
+              <template x-if="settings.wearingStyle.includes('shrink')">
+                <div class="setting-row">
+                  <label for="min-font-size">
+                    Minimum font size (%)
+                  </label>
+                  <input type="number" id="min-font-size" name="min-font-size" min="1" max="100"
+                    x-model="settings.minFontSize" />
+                </div>
+              </template>
+              <template x-if="settings.wearingStyle.includes('shrink')">
+                <div class="setting-row">
+                  <label for="max-font-size">
+                    Maximum font size (%)
+                  </label>
+                  <input type="number" id="max-font-size" name="max-font-size" min="100" max="1000"
+                    x-model="settings.maxFontSize" />
+                </div>
+              </template>
+              <template x-if="settings.wearingStyle.includes('fade')">
+                <div class="setting-row">
+                  <label for="min-fade">
+                    Minimum Opacity (%)
+                  </label>
+                  <input type="number" id="min-fade" name="min-fade" min="1" max="100" x-model="settings.minFade" />
+                </div>
+              </template>
+
+              <div class="setting-row">
+                <fieldset>
+                  <legend>Wear scaling</legend>
+                  <div>
+                    <input type="radio" id="font-scaling-relative-to-book" name="font-scaling" value="book"
+                      x-model="settings.wearScaling" />
+                    <label for="font-scaling-relative-to-book">
+                      Relative to most common word in the book
+                    </label>
+                  </div>
+                  <div>
+                    <input type="radio" id="font-scaling-relative-to-word" name="font-scaling" value="word"
+                      x-model="settings.wearScaling" />
+                    <label for="font-scaling-relative-to-word">
+                      Relative to the frequency of the word
+                    </label>
+                  </div>
+                  <div>
+                    <input type="radio" id="font-scaling-custom" name="font-scaling" value="custom"
+                      x-model="settings.wearScaling" />
+                    <label for="font-scaling-custom">
+                      When this word appears a certain number of times
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+              <template x-if="settings.wearScaling == 'custom'">
+                <div class="setting-row">
+                  <label for="font-scaling-custom-value">
+                    Word count for maximum wear
+                  </label>
+                  <input type="number" id="font-scaling-custom-value" name="font-scaling-custom-value" min="1" max="100"
+                    x-model="settings.wearScalingCustomValue" />
+                </div>
+              </template>
+            </div>
+          </details>
+        </div>
+      </div>
+    </aside>
+    <div class="h-border"></div>
+    <footer>
+      <span><span>Made by <a href="https://relevant.space" target="_blank">Dalia</a> using <a href="#"
+            target="_blank">Alpine.js</a></span> <span class="footer-separator">|</span> <span>Books from <a
+            href="https://standardebooks.org" target="_blank">Standard Ebooks</a></span></span>
+    </footer>
+  </div>
+  <div id="sidebar-button-wrapper">
+    <button id="sidebar-button" x-on:click="toggleSidebar">
+      <span x-show="!sidebarOpen"><span class="material-symbols-outlined closed">
+          arrow_forward_ios
+        </span></span>
+      <span x-show="sidebarOpen"><span class="material-symbols-outlined open">
+          arrow_back_ios
+        </span></span>
+    </button>
+  </div>
+  <main x-bind:class="{'sidebar-open': sidebarOpen}">
+    <div id="book-header">
+      <div id="title-info" x-show="!sidebarOpen">
+        <span x-text="book.title"></span>
+      </div>
+      <div id="chapter-info">
+        <select id="chapter-selector" x-model="progress.selectedChapterIndex">
+          <template x-for="(chapter, index) in book.chapters">
+            <option x-bind:value="index" x-text="chapter.chapterTitle"></option>
+          </template>
+        </select>
+      </div>
+    </div>
+    <div id="book-content">
+      <template x-if="progress.selectedPage?.pageIndex == 0">
+        <h2 class="chapter-title" x-text="progress.selectedChapter.chapterTitle"></h2>
+      </template>
+      <div x-html="progress.selectedChapterPage" class="page-content" x-show="progress.selectedChapterPage"></div>
+    </div>
+    <div id="page-controls">
+      <button id="previous-page" x-on:click="selectPreviousPage"
+        x-bind:disabled="progress.selectedPageIndex == 0">
+        Previous
+      </button>
+      <!-- <span id="page-number" x-text="progress.pageNumber"></span> -->
+      <select id="page-selector" x-model="progress.selectedPageIndex">
+        <template x-for="(page, index) in book.pages">
+          <option x-bind:value="index" x-text="page.pageNumber*1+1"></option>
+        </template>
+      </select>
+      <button id="next-page"
+        x-on:click="selectNextPage"
+        x-bind:disabled="progress.selectedPageIndex == book.pages.length - 1">
+        Next
+      </button>
+    </div>
+  </main>
+
+  <dialog>
+    <div id="dialog-wrapper">
+      <label for="book-selector">Select a book or paste a single-page link from Standard eBooks (the ones that end with text/single-page).</label>
+      <input list="resource-selector" id="book-selector" name="book-selector" type="text" autofocus />
+      <datalist id="resource-selector">
+
+      </datalist>
+      <span id="dialog-error"></span>
+      <div class="control-row">
+        <button id="cancel-button">Cancel</button>
+        <button id="read-button" x-on:click="confirmBookSelection">Read</button>
+      </div>
+    </div>
+  </dialog>
+  <script src="/scripts/main.js"></script>
+  <script src="/resources/index.js"></script>
+  <script src="/scripts/resourceValidator.js"></script>
+  <script src="/scripts/index.js"></script>
+  <script src="/scripts/alpineSetup.js"></script>
+</body>
+
+</html>

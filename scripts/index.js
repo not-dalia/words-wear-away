@@ -4,6 +4,7 @@ const readButton = document.querySelector('#read-button')
 const bookSelector = document.querySelector('#book-selector')
 const dialogError = document.querySelector('#dialog-error')
 const bookContent = document.querySelector('#book-content')
+const main = document.querySelector('main')
 
 const populateOptions = () => {
   const resourceSelector = document.querySelector('#resource-selector')
@@ -46,6 +47,10 @@ const showResourceSelector = () => {
 
 const hideResourceSelector = () => {
   resourceSelectorDialog.close()
+}
+
+const scrollToTop = () => {
+  main.scrollTop = 0
 }
 
 // when clicking left or right arrow keys, go to previous or next page

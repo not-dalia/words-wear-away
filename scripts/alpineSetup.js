@@ -35,11 +35,13 @@ document.addEventListener('alpine:init', async () => {
     selectPreviousPage () {
       if (this.progress.selectedPageIndex > 0) {
         this.progress.selectedPageIndex--
+        scrollToTop()
       }
     },
     selectNextPage () {
       if (this.progress.selectedPageIndex < this.book.pages.length - 1) {
         this.progress.selectedPageIndex++
+        scrollToTop()
       }
     },
 
@@ -83,8 +85,6 @@ document.addEventListener('alpine:init', async () => {
           // shrink the font size of the word based on the wear factor
           // min font size is this.settings.minFontSize% of 1em
           // max font size is this.settings.maxFontSize% of 1em
-          if (i == 100) debugger
-
           let fontSize = this.settings.minFontSize / 100 + (this.settings.maxFontSize - this.settings.minFontSize) / 100 * (1 - wearFactor)
           span.style.fontSize = `${fontSize}rem`
           prevFontSize = fontSize
@@ -95,7 +95,6 @@ document.addEventListener('alpine:init', async () => {
           // max fade is 100%
           // fade is opacity
           let fade = this.settings.minFade / 100 + (100 - this.settings.minFade) / 100 * (1 - wearFactor)
-          if (fade < 0) debugger
           span.style.opacity = `${fade * 100}%`
           prevFade = fade * 100
         }
@@ -235,12 +234,10 @@ document.addEventListener('alpine:init', async () => {
         const selectedBook = await getResource(selectedResource)
         if (selectedBook) {
           this.selectedResource = selectedBook.resource
-          debugger
           this.saveSelectedBookForLater(selectedBook.resource)
           hideResourceSelector()
           // console.log(selectedBook)
           this.book = selectedBook
-          debugger
           this.progress = {
             wordCount: 0,
             uniqueWordCount: 0,

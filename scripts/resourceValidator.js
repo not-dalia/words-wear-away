@@ -13,7 +13,6 @@ const fixStandardEbookURL = (resource) => {
   // if it ends with /text/something, this should stay
   // otherwise it should be /text/single-page
   const standardEbookURLRegex = /^https?:\/\/(www\.)?standardebooks\.org\/ebooks\/.+\/.+\/*/
-  debugger
   if (!standardEbookURLRegex.test(resource)) return null
   // if (resource.endsWith('/text/single-page')) return resource
   // if (resource.endsWith(/\/text\/.+/)) return resource // endsWith can't take regex
